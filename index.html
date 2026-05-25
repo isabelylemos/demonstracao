@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrimaq - Painel Interativo de Demonstração</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Cores oficiais Agrimaq obtidas da identidade visual */
+        .color-blue-dark { color: #0F2A59; }
+        .bg-blue-dark { background-color: #0F2A59; }
+        .border-blue-dark { border-color: #0F2A59; }
+        
+        .color-green-agri { color: #5CA135; }
+        .bg-green-agri { background-color: #5CA135; }
+        .border-green-agri { border-color: #5CA135; }
+
+        .transition-fade {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- BARRA DO PALESTRANTE (Controle Rápido de Demonstração) -->
+    <div class="bg-gray-900 text-gray-300 text-xs py-3 px-4 z-50 border-b border-gray-800 shadow-md">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-2 text-center md:text-left">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse flex-shrink-0"></span>
+                <strong>MODO DEMO:</strong> Navegue livremente pelas etapas da apresentação:
+            </div>
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-1.5 w-full md:w-auto">
+                <button onclick="forcarTela('cadastro')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">1. Cadastro</button>
+                <button onclick="forcarTela('compra')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2A. Catálogo Compra</button>
+                <button onclick="forcarTela('servicos-mec')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2B. Serviços</button>
+                <button onclick="forcarTela('mecanicos')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2C. Profissionais</button>
+                <button onclick="forcarTela('acompanhamento')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs col-span-2 sm:col-span-1">3. Acompanhamento</button>
+                <button onclick="reiniciarDemo()" class="bg-red-900/60 hover:bg-red-850 text-red-100 font-bold py-1.5 px-2.5 rounded border border-red-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs col-span-2 sm:col-span-1"><i class="fa-solid fa-rotate-left mr-1"></i> Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER PRINCIPAL AGRIMAQ -->
+    <header class="bg-white shadow-sm border-b-4 border-blue-dark">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4 text-center sm:text-left flex-col sm:flex-row">
+                <!-- Logotipo Estilizado conforme slides oficiais -->
+                <div class="flex items-center">
+                    <div class="relative flex items-center justify-center bg-blue-dark text-white font-black text-3xl w-14 h-14 rounded-lg shadow">
+                        AA
+                        <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-agri rounded-full border-2 border-white flex items-center justify-center">
+                            <i class="fa-solid fa-gear text-[10px] text-white animate-spin"></i>
+                        </div>
+                    </div>
+                    <div class="ml-3 text-left">
+                        <span class="block text-2xl font-extrabold tracking-tight text-slate-800">Agrimaq</span>
+                        <span class="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest leading-none">Máquinas & Assistência</span>
+                    </div>
+                </div>
+                <div class="hidden sm:block h-8 w-px bg-gray-200"></div>
+                <p class="hidden sm:block text-xs text-gray-500 max-w-xs leading-tight">
+                    Manutenção e assistência técnica de Máquinas portáteis agrícolas.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- PALCO PRINCIPAL (CONTEÚDO) -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 sm:py-8">
+        
+        <!-- ================= TELA 1: CADASTRO ================= -->
+        <section id="tela-cadastro" class="transition-fade max-w-xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-blue-dark text-white p-6 relative">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl pointer-events-none">
+                    <i class="fa-solid fa-tractor"></i>
+                </div>
+                <h2 class="text-xl font-bold">Abertura de Chamado Digital</h2>
+                <p class="text-sm text-blue-200 mt-1">Insira os dados cadastrais rápidos e prossiga para a simulação do fluxo de atendimento.</p>
+            </div>
+            
+            <div class="p-6 space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5"><i class="fa-solid fa-user mr-1.5 text-gray-400"></i> Nome Completo</label>
+                    <input type="text" id="input-nome" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 transition text-sm sm:text-base" placeholder="Ex: Iran de Souza Lima">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5"><i class="fa-solid fa-envelope mr-1.5 text-gray-400"></i> E-mail (Opcional)</label>
+                        <input type="email" id="input-email" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 transition text-sm sm:text-base" placeholder="Ex: cliente.agrimaq@gmail.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5"><i class="fa-solid fa-phone mr-1.5 text-gray-400"></i> Telefone / WhatsApp</label>
+                        <input type="tel" id="input-telefone" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 transition text-sm sm:text-base" placeholder="Ex: (13) 99799-1510">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-3">
+                    <label class="block text-sm font-bold text-slate-800"><i class="fa-solid fa-gears mr-1.5 color-green-agri"></i> Selecione o Tipo de Serviço Desejado</label>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Card Radio Compra -->
+                        <label class="relative flex items-center justify-between p-4 bg-white rounded-lg border-2 border-slate-200 cursor-pointer hover:border-emerald-500 transition-all checked:border-emerald-500">
+                            <input type="radio" name="opcao-servico" value="compra" checked class="absolute right-4 top-4 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-slate-800 text-sm">Comprar Produto</span>
+                                    <span class="block text-[11px] text-gray-500">Máquinas e peças</span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Card Radio Manutenção -->
+                        <label class="relative flex items-center justify-between p-4 bg-white rounded-lg border-2 border-slate-200 cursor-pointer hover:border-emerald-500 transition-all">
+                            <input type="radio" name="opcao-servico" value="manutencao" class="absolute right-4 top-4 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-slate-800 text-sm">Manutenção</span>
+                                    <span class="block text-[11px] text-gray-500">Conserto e assistência</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="button" onclick="irParaListagem()" class="w-full bg-green-agri hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 transition flex items-center justify-center gap-2 active:scale-[0.99]">
+                    Continuar para Seleção <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TELA 2A: LISTAGEM DE COMPRAS ================= -->
+        <section id="tela-lista-compra" class="transition-fade hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto px-4">
+                <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-store mr-1"></i> Catálogo Agrimaq</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-2">Escolha o seu Equipamento ou Peça</h2>
+                <p class="text-gray-500 text-xs sm:text-sm mt-1">Todos os nossos produtos de pronta-entrega contam com nossa garantia de procedência de assistência técnica regional.</p>
+            </div>
+
+            <!-- Grid de Produtos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Produto 1: Motosserra -->
+                <div class="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 sm:h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                            <img src="imgs/eletrosserra.jpeg" onerror="this.src='https://placehold.co/600x400/0f2a59/ffffff?text=Motosserra+Agrícola'" alt="Motosserra Portátil Profissional" class="w-full h-full object-cover">
+                            <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">MAIS VENDIDO</span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-slate-800 text-base leading-snug">Motosserra Portátil Agrícola Pro</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2">Ideal para podas, corte de galhos, lenha e manutenção de cercas no campo.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-gray-400 leading-none">Apenas</span>
+                            <span class="text-lg sm:text-xl font-extrabold text-slate-800">R$ 1.890</span>
+                        </div>
+                        <button onclick="selecionarProduto('Motosserra Portátil Agrícola Pro', 1890, 'imgs/eletrosserra.jpeg')" class="bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition active:scale-95">
+                            Comprar <i class="fa-solid fa-basket-shopping ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Produto 2: Roçadeira -->
+                <div class="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 sm:h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                            <img src="imgs/roçadeira.jpeg" onerror="this.src='https://placehold.co/600x400/0f2a59/ffffff?text=Roçadeira+Lateral'" alt="Roçadeira Lateral de Grama" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-slate-800 text-base leading-snug">Roçadeira de Grama Motorizada</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2">Motor de alta rotação, perfeita para limpeza de terrenos, pastos e gramados grandes.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-gray-400 leading-none">Apenas</span>
+                            <span class="text-lg sm:text-xl font-extrabold text-slate-800">R$ 1.250</span>
+                        </div>
+                        <button onclick="selecionarProduto('Roçadeira de Grama Motorizada', 1250, 'imgs/roçadeira.jpeg')" class="bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition active:scale-95">
+                            Comprar <i class="fa-solid fa-basket-shopping ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Produto 3: Carretinha -->
+                <div class="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 sm:h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                            <img src="imgs/carretinha.jpeg" onerror="this.src='https://placehold.co/600x400/0f2a59/ffffff?text=Carretinha'" alt="Carretinha Agrícola Multiuso" class="w-full h-full object-cover">
+                            <span class="absolute top-3 left-3 bg-green-agri text-white text-[10px] font-bold px-2 py-0.5 rounded">AGRI-MAX</span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-slate-800 text-base leading-snug">Carretinha Agrícola Multiuso</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2">Ideal para transporte de insumos, ferramentas e colheitas em pequenas propriedades rurais.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-gray-400 leading-none">Apenas</span>
+                            <span class="text-lg sm:text-xl font-extrabold text-slate-800">R$ 4.600</span>
+                        </div>
+                        <button onclick="selecionarProduto('Carretinha Agrícola Multiuso', 4600, 'imgs/carretinha.jpeg')" class="bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition active:scale-95">
+                            Comprar <i class="fa-solid fa-basket-shopping ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Produto 4: Oleo -->
+                <div class="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 sm:h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                            <img src="imgs/oleo.jpeg" onerror="this.src='https://placehold.co/600x400/0f2a59/ffffff?text=Lubrificante'" alt="Óleo Lubrificante 2T" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-slate-800 text-base leading-snug">Óleo Lubrificante Premium (1L)</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2">Fórmula avançada que reduz o desgaste de cilindros e pistões de serras e roçadeiras.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-gray-400 leading-none">Apenas</span>
+                            <span class="text-lg sm:text-xl font-extrabold text-slate-800">R$ 45</span>
+                        </div>
+                        <button onclick="selecionarProduto('Óleo Lubrificante Premium 2 Tempos', 45, 'imgs/oleo.jpeg')" class="bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2 px-3 rounded-lg transition active:scale-95">
+                            Comprar <i class="fa-solid fa-basket-shopping ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão Voltar -->
+            <div class="text-center pt-4">
+                <button onclick="voltarParaCadastro()" class="text-slate-500 hover:text-slate-800 font-semibold text-sm transition flex items-center justify-center gap-1.5 mx-auto py-2 px-4 hover:bg-slate-200 rounded-lg">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para os dados pessoais
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TELA 2B-1: LISTAGEM DE TIPOS DE MANUTENÇÃO ================= -->
+        <section id="tela-servicos-mecanicos" class="transition-fade hidden space-y-6 max-w-4xl mx-auto">
+            <div class="text-center px-4">
+                <span class="text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-toolbox mr-1"></i> Serviços Oficina</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-2">Escolha o Tipo de Manutenção</h2>
+                <p class="text-gray-500 text-xs sm:text-sm mt-1">Selecione o serviço ideal necessário para o reparo ou revisão preventiva da sua máquina portátil.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Serviço 1 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold flex-shrink-0">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Regulagem de Carburador</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">⏱️ Tempo Estimado: 45 min</p>
+                            <p class="text-xs text-gray-500 mt-1">Ajuste fino de admissão para aceleração ideal e ganho de força.</p>
+                        </div>
+                    </div>
+                    <button onclick="selecionarServicoMecanico('Regulagem de Carburador')" class="w-full sm:w-auto bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition active:scale-95 whitespace-nowrap">
+                        Selecionar
+                    </button>
+                </div>
+
+                <!-- Serviço 2 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold flex-shrink-0">
+                            <i class="fa-solid fa-fire"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Limpeza e Descarbonização</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">⏱️ Tempo Estimado: 1h 30m</p>
+                            <p class="text-xs text-gray-500 mt-1">Limpeza química interna e desobstrução de dutos e cilindros.</p>
+                        </div>
+                    </div>
+                    <button onclick="selecionarServicoMecanico('Limpeza e Descarbonização')" class="w-full sm:w-auto bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition active:scale-95 whitespace-nowrap">
+                        Selecionar
+                    </button>
+                </div>
+
+                <!-- Serviço 3 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold flex-shrink-0">
+                            <i class="fa-solid fa-scissors"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Afiação de Corrente e Ajustes</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">⏱️ Tempo Estimado: 30 min</p>
+                            <p class="text-xs text-gray-500 mt-1">Ajuste de sabre, tensionamento e afiação profissional.</p>
+                        </div>
+                    </div>
+                    <button onclick="selecionarServicoMecanico('Afiação de Corrente e Ajustes')" class="w-full sm:w-auto bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition active:scale-95 whitespace-nowrap">
+                        Selecionar
+                    </button>
+                </div>
+
+                <!-- Serviço 4 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-xl font-bold flex-shrink-0">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Revisão Preventiva Geral</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">⏱️ Tempo Estimado: 2h 00m</p>
+                            <p class="text-xs text-gray-500 mt-1">Troca de filtro de ar/combustível, velas e lubrificação completa.</p>
+                        </div>
+                    </div>
+                    <button onclick="selecionarServicoMecanico('Revisão Preventiva Geral')" class="w-full sm:w-auto bg-blue-dark hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition active:scale-95 whitespace-nowrap">
+                        Selecionar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botão Voltar -->
+            <div class="text-center pt-4">
+                <button onclick="voltarParaCadastro()" class="text-slate-500 hover:text-slate-800 font-semibold text-sm transition flex items-center justify-center gap-1.5 mx-auto py-2 px-4 hover:bg-slate-200 rounded-lg">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para os dados pessoais
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TELA 2B-2: SELEÇÃO DE PROFISSIONAL (MECÂNICOS SIMPLIFICADOS) ================= -->
+        <section id="tela-lista-manutencao" class="transition-fade hidden space-y-6 max-w-4xl mx-auto">
+            <div class="text-center px-4">
+                <span class="text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-wrench mr-1"></i> Profissionais Disponíveis</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-2">Escolha o Mecânico Disponível</h2>
+                <p class="text-gray-500 text-xs sm:text-sm mt-1">Ambos são profissionais especializados no agronegócio regional. Escolha quem realizará sua manutenção.</p>
+            </div>
+
+            <!-- Lista de Dois Mecânicos Simplificada -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                
+                <!-- Mecânico 1: Iran -->
+                <div class="bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-slate-100 overflow-hidden flex flex-col justify-between transition-all duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-950 border border-blue-200 flex items-center justify-center text-2xl font-black shadow-inner flex-shrink-0">
+                                IS
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 leading-none">Iran de Souza</h3>
+                                <span class="text-xs text-gray-500 mt-1.5 block">Mecânico</span>
+                            </div>
+                        </div>
+
+                        <!-- Indicadores de Disponibilidade -->
+                        <div class="space-y-3.5 border-t border-slate-100 pt-4 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-calendar-days text-emerald-600 mr-2"></i> Dias de Disponibilidade:</span>
+                                <span class="font-bold text-slate-800 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded">Segunda a Quarta</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-hand-holding-dollar text-emerald-600 mr-2"></i> Orçamento Estimado:</span>
+                                <span class="font-extrabold text-base sm:text-lg text-slate-800 font-mono">R$ 180,00</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-business-time text-emerald-600 mr-2"></i> Prazo Médio de Entrega:</span>
+                                <span class="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded">24h a 48h</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 bg-slate-50 border-t border-slate-100">
+                        <button onclick="selecionarMecanico('Iran de Souza', 180)" class="w-full bg-green-agri hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 active:scale-95">
+                            Agendar com Iran de Souza <i class="fa-solid fa-calendar-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mecânico 2: Matheus -->
+                <div class="bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-slate-100 overflow-hidden flex flex-col justify-between transition-all duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-full bg-orange-50 text-orange-950 border border-orange-200 flex items-center justify-center text-2xl font-black shadow-inner flex-shrink-0">
+                                MA
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 leading-none">Matheus Ramos</h3>
+                                <span class="text-xs text-gray-500 mt-1.5 block">Mecânico</span>
+                            </div>
+                        </div>
+
+                        <!-- Indicadores de Disponibilidade -->
+                        <div class="space-y-3.5 border-t border-slate-100 pt-4 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-calendar-days text-orange-600 mr-2"></i> Dias de Disponibilidade:</span>
+                                <span class="font-bold text-slate-800 bg-orange-50 text-orange-800 px-2.5 py-1 rounded">Quinta a Sábado</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-hand-holding-dollar text-orange-600 mr-2"></i> Orçamento Estimado:</span>
+                                <span class="font-extrabold text-base sm:text-lg text-slate-800 font-mono">R$ 140,00</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500"><i class="fa-solid fa-business-time text-orange-600 mr-2"></i> Prazo Médio de Entrega:</span>
+                                <span class="font-bold text-orange-700 bg-orange-50 px-2.5 py-1 rounded">12h a 24h</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 bg-slate-50 border-t border-slate-100">
+                        <button onclick="selecionarMecanico('Matheus Ramos', 140)" class="w-full bg-blue-dark hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 active:scale-95">
+                            Agendar com Matheus Ramos <i class="fa-solid fa-calendar-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Botão Voltar -->
+            <div class="text-center pt-4">
+                <button onclick="voltarParaListaDeServicos()" class="text-slate-500 hover:text-slate-800 font-semibold text-sm transition flex items-center justify-center gap-1.5 mx-auto py-2 px-4 hover:bg-slate-200 rounded-lg">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para os tipos de manutenção
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ================= TELA 3: ACOMPANHAMENTO DINÂMICO ================= -->
+        <section id="tela-acompanhamento" class="transition-fade hidden max-w-2xl mx-auto space-y-6">
+            
+            <div class="bg-emerald-600 text-white p-6 rounded-2xl shadow-lg flex items-center justify-between flex-wrap gap-4 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-5 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-check-double"></i>
+                </div>
+                <div>
+                    <span class="text-xs bg-emerald-800 text-emerald-100 font-extrabold px-2 py-1 rounded uppercase tracking-wide">Serviço/Pedido Registrado</span>
+                    <h2 class="text-2xl font-bold mt-1">Status de Atendimento</h2>
+                    <p class="text-sm text-emerald-100 mt-1">Olá, <strong id="lbl-nome-cliente">Cliente</strong>! O seu chamado está ativo e pode ser acompanhado no painel abaixo.</p>
+                </div>
+                <div class="bg-emerald-700/60 border border-emerald-500 px-4 py-2.5 rounded-xl text-center w-full sm:w-auto">
+                    <span class="block text-[10px] uppercase text-emerald-200 tracking-wider">PROTOCOLO</span>
+                    <span class="block text-lg font-bold font-mono text-white">#AM-2026-984</span>
+                </div>
+            </div>
+
+            <!-- Linha do Tempo Dinâmica do Pedido -->
+            <div class="bg-white rounded-2xl shadow border border-slate-100 p-5 sm:p-6 space-y-6">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-route text-emerald-600"></i> Progresso do Atendimento
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1">Acompanhe as atualizações automáticas que a equipe da Agrimaq publica sobre o seu serviço.</p>
+                </div>
+
+                <!-- LINHA DO TEMPO DINÂMICA: FLUXO DE COMPRA -->
+                <div id="timeline-compra" class="hidden relative pl-8 border-l-2 border-slate-100 space-y-8">
+                    <!-- Passo 1 -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-emerald-100">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">15 minutos atrás</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Pedido Confirmado & Pagamento Aprovado</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">O sistema de vendas confirmou o pagamento e emitiu a nota fiscal correspondente.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 2 -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-emerald-100">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">5 minutos atrás</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Separação de Estoque & Embalagem</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">A equipe de estoque separou o produto e já preparou o pacote seguro para transporte.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 3 (Etapa Atual) -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-blue-dark text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-blue-100 animate-pulse">
+                            <i class="fa-solid fa-truck"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-emerald-600 font-extrabold block uppercase tracking-wider">Acontecendo Agora</span>
+                            <h4 class="font-bold text-blue-950 text-sm">Saiu com a Logística "Leva e Traz"</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">O veículo de entrega da Agrimaq já está em trânsito para entregar no endereço acordado.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4 -->
+                    <div class="relative opacity-40">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                            4
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">Pendente</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Entregue no Endereço do Cliente</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Finalização da entrega e colheita da assinatura do recebedor.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- LINHA DO TEMPO DINÂMICA: FLUXO DE MANUTENÇÃO -->
+                <div id="timeline-manutencao" class="hidden relative pl-8 border-l-2 border-slate-100 space-y-8">
+                    <!-- Passo 1 -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-emerald-100">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">2 horas atrás</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Equipamento Recebido na Oficina</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Sua máquina portátil deu entrada no sistema da oficina com coleta realizada via "Leva e Traz".</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 2 -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-emerald-100">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">1 hora atrás</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Avaliação Técnica & Orçamento Aprovado</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">O orçamento base foi validado com sucesso para a execução das atividades.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 3 (Etapa Atual) -->
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-blue-dark text-white flex items-center justify-center text-[10px] font-bold ring-4 ring-blue-100 animate-pulse">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-emerald-600 font-extrabold block uppercase tracking-wider">Acontecendo Agora</span>
+                            <h4 class="font-bold text-blue-950 text-sm">Em Manutenção na Oficina</h4>
+                            <p class="text-xs text-slate-600 mt-0.5">O equipamento portátil está desmontado em bancada para troca das peças gastas e ajustes mecânicos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4 -->
+                    <div class="relative opacity-40">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                            4
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">Pendente</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Testes Finais de Funcionamento</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Ligagem e aceleração máxima controlada para aferir qualidade de carburação e corte.</p>
+                        </div>
+                    </div>
+
+                    <!-- Passo 5 -->
+                    <div class="relative opacity-40">
+                        <span class="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                            5
+                        </span>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">Pendente</span>
+                            <h4 class="font-bold text-slate-800 text-sm">Pronto para Devolução (Leva e Traz)</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Entrega do portátil revisado ao endereço de destino com toda a comodidade.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão Realizar Nova Simulação -->
+                <button onclick="reiniciarDemo()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition text-sm flex items-center justify-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-rotate-left"></i> Realizar Nova Simulação
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER INSTITUCIONAL AGRIMAQ -->
+    <footer class="bg-blue-dark text-white py-6 mt-12 border-t-4 border-green-agri">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-center md:text-left">
+            <div>
+                <p class="font-bold text-sm tracking-wide">AGRIMAQ - REGISTRO/SP</p>
+                <p class="text-gray-300 mt-1">Rua Pres. Getúlio Vargas, nº 685 - Centro, Registro - SP</p>
+            </div>
+            <div class="flex gap-5 text-xl justify-center">
+                <a href="https://wa.me/5513997991510" target="_blank" class="text-gray-300 hover:text-green-agri transition"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://instagram.com/agrimaqregistro" target="_blank" class="text-gray-300 hover:text-green-agri transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="mailto:contato@agrimaq.com.br" class="text-gray-300 hover:text-green-agri transition"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+            <div class="text-center md:text-right text-gray-400">
+                <p>© 2026 Agrimaq. Projeto Integrador.</p>
+                <p class="text-[10px] mt-0.5">Criado para fins demonstrativos.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT DE NAVEGAÇÃO INTERATIVA -->
+    <script>
+        // Memória de Estado da Aplicação (Simulado)
+        let dadosDoUsuario = {
+            nome: 'Iran de Souza Lima',
+            email: '',
+            telefone: '(13) 99799-1510',
+            tipoServico: 'compra'
+        };
+
+        // Guarda o serviço mecânico escolhido antes de selecionar o profissional
+        let servicoMecanicoEscolhido = 'Regulagem de Carburador';
+
+        let itemSelecionado = {
+            nome: 'Motosserra Portátil Agrícola Pro',
+            preco: 'R$ 1.890,00',
+            fotoHtml: `<i class="fa-solid fa-box text-2xl text-slate-500"></i>`
+        };
+
+        // Função Principal do Primeiro Botão de Cadastro (Sem barreira de validação)
+        function irParaListagem() {
+            // Coletar Dados do Formulário (Se deixados em branco, assumir valores de teste padrão)
+            dadosDoUsuario.nome = document.getElementById('input-nome').value.trim() || 'Iran de Souza Lima';
+            dadosDoUsuario.email = document.getElementById('input-email').value.trim() || 'cliente.agrimaq@gmail.com';
+            dadosDoUsuario.telefone = document.getElementById('input-telefone').value.trim() || '(13) 99799-1510';
+            
+            // Descobrir qual rádio de serviço está selecionado
+            const radios = document.getElementsByName('opcao-servico');
+            for (let r of radios) {
+                if (r.checked) {
+                    dadosDoUsuario.tipoServico = r.value;
+                }
+            }
+
+            esconderTodasAsTelas();
+
+            if (dadosDoUsuario.tipoServico === 'compra') {
+                document.getElementById('tela-lista-compra').classList.remove('hidden');
+            } else {
+                // Direciona primeiro para a nova lista de tipos de manutenções
+                document.getElementById('tela-servicos-mecanicos').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Fluxo de COMPRA: Selecionar Produto do Catálogo e ir para Acompanhamento
+        function selecionarProduto(nome, preco, imagemUrl) {
+            itemSelecionado.nome = nome;
+            itemSelecionado.preco = `R$ ${preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            itemSelecionado.fotoHtml = `<img src="${imagemUrl}" class="w-full h-full object-cover">`;
+
+            irParaAcompanhamento('compra');
+        }
+
+        // Fluxo de MANUTENÇÃO - Etapa 1: Escolha do Tipo de Serviço
+        function selecionarServicoMecanico(nomeServico) {
+            servicoMecanicoEscolhido = nomeServico;
+            
+            // Avança para a tela de escolha de profissionais
+            esconderTodasAsTelas();
+            document.getElementById('tela-lista-manutencao').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Fluxo de MANUTENÇÃO - Etapa 2: Seleção de Mecânico (Simplificado)
+        function selecionarMecanico(nomeMecanico, precoTaxa) {
+            // Unifica o nome do tipo de serviço mecânico + o mecânico selecionado
+            itemSelecionado.nome = `${servicoMecanicoEscolhido} (${nomeMecanico})`;
+            itemSelecionado.preco = `Taxa de Mão de Obra: R$ ${precoTaxa.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            
+            // Define o avatar circular com iniciais
+            const iniciais = nomeMecanico === 'Iran de Souza' ? 'IS' : 'MA';
+            const bgClass = nomeMecanico === 'Iran de Souza' ? 'bg-blue-100 text-blue-900' : 'bg-orange-100 text-orange-900';
+            
+            itemSelecionado.fotoHtml = `<div class="w-full h-full ${bgClass} flex items-center justify-center font-bold text-sm shadow-inner">${iniciais}</div>`;
+
+            irParaAcompanhamento('manutencao');
+        }
+
+        // Função de Entrada da Tela 3: Acompanhamento de Serviços
+        function irParaAcompanhamento(tipoOverride) {
+            esconderTodasAsTelas();
+
+            const tipoFinal = tipoOverride || dadosDoUsuario.tipoServico;
+
+            // Injeta dados nos rótulos de acompanhamento
+            document.getElementById('lbl-nome-cliente').innerText = dadosDoUsuario.nome;
+
+            // Ativa os painéis operacionais corretos de acordo com o fluxo final escolhido
+            if (tipoFinal === 'compra') {
+                document.getElementById('timeline-compra').classList.remove('hidden');
+                document.getElementById('timeline-manutencao').classList.add('hidden');
+            } else {
+                document.getElementById('timeline-compra').classList.add('hidden');
+                document.getElementById('timeline-manutencao').classList.remove('hidden');
+            }
+
+            document.getElementById('tela-acompanhamento').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Utilitários de Transição e Voltar
+        function voltarParaCadastro() {
+            esconderTodasAsTelas();
+            document.getElementById('tela-cadastro').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Voltar da escolha do mecânico para a escolha do tipo de serviço
+        function voltarParaListaDeServicos() {
+            esconderTodasAsTelas();
+            document.getElementById('tela-servicos-mecanicos').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function esconderTodasAsTelas() {
+            document.getElementById('tela-cadastro').classList.add('hidden');
+            document.getElementById('tela-lista-compra').classList.add('hidden');
+            document.getElementById('tela-servicos-mecanicos').classList.add('hidden');
+            document.getElementById('tela-lista-manutencao').classList.add('hidden');
+            document.getElementById('tela-acompanhamento').classList.add('hidden');
+        }
+
+        // Controle do Palestrante: Saltar diretamente para qualquer tela
+        function forcarTela(alvo) {
+            esconderTodasAsTelas();
+            if (alvo === 'cadastro') {
+                document.getElementById('tela-cadastro').classList.remove('hidden');
+            } else if (alvo === 'compra') {
+                document.getElementById('tela-lista-compra').classList.remove('hidden');
+            } else if (alvo === 'servicos-mec') {
+                document.getElementById('tela-servicos-mecanicos').classList.remove('hidden');
+            } else if (alvo === 'mecanicos') {
+                document.getElementById('tela-lista-manutencao').classList.remove('hidden');
+            } else if (alvo === 'acompanhamento') {
+                irParaAcompanhamento();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Resetar toda a Simulação para o início
+        function reiniciarDemo() {
+            document.getElementById('input-nome').value = '';
+            document.getElementById('input-email').value = '';
+            document.getElementById('input-telefone').value = '';
+            dadosDoUsuario = {
+                nome: 'Iran de Souza Lima',
+                email: '',
+                telefone: '(13) 99799-1510',
+                tipoServico: 'compra'
+            };
+            servicoMecanicoEscolhido = 'Regulagem de Carburador';
+            forcarTela('cadastro');
+        }
+    </script>
+</body>
+</html>
