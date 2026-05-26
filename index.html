@@ -63,7 +63,8 @@
                 <button onclick="forcarTela('compra')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2A. Catálogo Compra</button>
                 <button onclick="forcarTela('servicos-mec')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2B. Serviços</button>
                 <button onclick="forcarTela('mecanicos')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">2C. Profissionais</button>
-                <button onclick="forcarTela('acompanhamento')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs col-span-2 sm:col-span-1">3. Acompanhamento</button>
+                <button onclick="forcarTela('pagamento')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs">3. Pagamento</button>
+                <button onclick="forcarTela('acompanhamento')" class="bg-gray-800 hover:bg-gray-700 text-white font-medium py-1.5 px-2.5 rounded border border-gray-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs col-span-2 sm:col-span-1">4. Acompanhamento</button>
                 <button onclick="reiniciarDemo()" class="bg-red-900/60 hover:bg-red-850 text-red-100 font-bold py-1.5 px-2.5 rounded border border-red-700 transition active:scale-[0.98] text-center text-[11px] sm:text-xs col-span-2 sm:col-span-1"><i class="fa-solid fa-rotate-left mr-1"></i> Reset</button>
             </div>
         </div>
@@ -454,6 +455,130 @@
             </div>
         </section>
 
+        <!-- ================= TELA 2.5: PAGAMENTO INTERATIVO ================= -->
+        <section id="tela-pagamento" class="transition-fade hidden max-w-xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-blue-dark text-white p-6 relative">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl pointer-events-none">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+                <span class="text-xs bg-emerald-600 text-white font-bold px-2.5 py-1 rounded uppercase tracking-wider">Etapa Quase Final</span>
+                <h2 class="text-xl font-bold mt-2">Escolha a Forma de Pagamento</h2>
+                <p class="text-xs text-blue-200 mt-1">Simulação segura e institucional integrada às diretrizes do Agrimaq.</p>
+            </div>
+
+            <!-- Resumo Financeiro da Compra ou Serviço -->
+            <div class="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="checkout-item-avatar" class="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0 text-slate-500 text-xl">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] text-gray-400 uppercase tracking-widest font-bold">Item Selecionado</span>
+                        <h3 id="checkout-item-nome" class="font-bold text-slate-800 text-sm leading-snug">Produto ou Serviço</h3>
+                    </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    <span class="block text-[10px] text-gray-400 uppercase tracking-widest font-bold">Total</span>
+                    <span id="checkout-item-preco" class="text-xl font-black text-slate-800">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Seletor de Abas de Pagamento -->
+                <div class="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-xl">
+                    <button onclick="mudarAbaPagamento('pix')" id="btn-tab-pix" class="py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 bg-white text-slate-800 shadow-sm">
+                        <i class="fa-brands fa-pix text-emerald-600 text-sm"></i> PIX
+                    </button>
+                    <button onclick="mudarAbaPagamento('cartao')" id="btn-tab-cartao" class="py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-white/50">
+                        <i class="fa-solid fa-credit-card text-blue-900 text-xs"></i> Cartão
+                    </button>
+                    <button onclick="mudarAbaPagamento('levera')" id="btn-tab-levera" class="py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-white/50 text-center">
+                        <i class="fa-solid fa-truck text-orange-600 text-xs"></i> Na Entrega
+                    </button>
+                </div>
+
+                <!-- CONTEÚDO DA ABA 1: PIX -->
+                <div id="conteudo-pagamento-pix" class="space-y-4 text-center py-2">
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex items-center justify-center gap-4 flex-col sm:flex-row">
+                        <!-- QR Code Simulado via SVG -->
+                        <div class="w-24 h-24 bg-white p-2 border rounded-lg flex items-center justify-center shadow-inner flex-shrink-0">
+                            <svg class="w-full h-full text-slate-800" viewBox="0 0 100 100" fill="currentColor">
+                                <rect x="5" y="5" width="25" height="25" fill="none" stroke="currentColor" stroke-width="8"/>
+                                <rect x="13" y="13" width="9" height="9"/>
+                                <rect x="70" y="5" width="25" height="25" fill="none" stroke="currentColor" stroke-width="8"/>
+                                <rect x="78" y="13" width="9" height="9"/>
+                                <rect x="5" y="70" width="25" height="25" fill="none" stroke="currentColor" stroke-width="8"/>
+                                <rect x="13" y="78" width="9" height="9"/>
+                                <rect x="40" y="40" width="20" height="20" fill="currentColor"/>
+                                <rect x="45" y="10" width="10" height="20"/>
+                                <rect x="10" y="45" width="20" height="10"/>
+                                <rect x="70" y="45" width="20" height="15"/>
+                                <rect x="45" y="70" width="15" height="20"/>
+                            </svg>
+                        </div>
+                        <div class="text-left space-y-1">
+                            <h4 class="font-bold text-slate-800 text-sm">Pague instantaneamente por Pix</h4>
+                            <p class="text-xs text-gray-500">Leia o código ao lado ou use a chave copia e cola abaixo para processar o pagamento fictício.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <input type="text" readonly id="pix-key-value" value="00020126580014br.gov.bcb.pix0136contato@agrimaq.com.br52040000" class="bg-slate-50 text-slate-400 font-mono text-xs p-3 rounded-lg border outline-none select-all flex-grow">
+                        <button onclick="copiarChavePix()" class="bg-blue-dark hover:bg-slate-800 text-white font-bold px-4 py-3 rounded-lg text-xs flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CONTEÚDO DA ABA 2: CARTÃO DE CRÉDITO -->
+                <div id="conteudo-pagamento-cartao" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Número do Cartão</label>
+                        <div class="relative">
+                            <input type="text" placeholder="4444 •••• •••• 4444" class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 outline-none text-slate-800 text-sm font-mono" maxlength="19">
+                            <i class="fa-solid fa-credit-card absolute left-3.5 top-3.5 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Validade</label>
+                            <input type="text" placeholder="MM/AA" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 outline-none text-slate-800 text-sm font-mono text-center" maxlength="5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">CVV</label>
+                            <input type="password" placeholder="•••" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 outline-none text-slate-800 text-sm font-mono text-center" maxlength="3">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nome no Cartão</label>
+                        <input type="text" placeholder="Ex: IRAN S LIMA" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 outline-none text-slate-800 text-sm uppercase">
+                    </div>
+                </div>
+
+                <!-- CONTEÚDO DA ABA 3: LEVA E TRAZ / RETIRADA NO BALCÃO -->
+                <div id="conteudo-pagamento-levera" class="hidden bg-orange-50 border border-orange-100 p-5 rounded-xl space-y-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-lg flex-shrink-0">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-800 text-sm">Pague direto ao Motorista / Atendente</h4>
+                            <p class="text-xs text-gray-600">Disponibilizamos toda a agilidade do nosso sistema <strong class="color-green-agri">"Leva e Traz"</strong>. Pague diretamente em dinheiro físico ou com cartões de débito/crédito na maquininha sem taxas extras.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de Ação de Pagamento -->
+                <button type="button" id="btn-finalizar-pagamento" onclick="processarEFinalizar()" class="w-full bg-green-agri hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 transition flex items-center justify-center gap-2 active:scale-[0.99]">
+                    Confirmar & Finalizar Pedido <i class="fa-solid fa-circle-check"></i>
+                </button>
+
+                <!-- Botão de Voltar -->
+                <button type="button" onclick="voltarDoPagamento()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-lg text-xs transition active:scale-[0.98]">
+                    Voltar e alterar escolha anterior
+                </button>
+            </div>
+        </section>
 
         <!-- ================= TELA 3: ACOMPANHAMENTO DINÂMICO ================= -->
         <section id="tela-acompanhamento" class="transition-fade hidden max-w-2xl mx-auto space-y-6">
@@ -671,13 +796,13 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Fluxo de COMPRA: Selecionar Produto do Catálogo e ir para Acompanhamento
+        // Fluxo de COMPRA: Selecionar Produto do Catálogo e ir para Pagamento
         function selecionarProduto(nome, preco, imagemUrl) {
             itemSelecionado.nome = nome;
             itemSelecionado.preco = `R$ ${preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             itemSelecionado.fotoHtml = `<img src="${imagemUrl}" class="w-full h-full object-cover">`;
 
-            irParaAcompanhamento('compra');
+            irParaPagamento('compra');
         }
 
         // Fluxo de MANUTENÇÃO - Etapa 1: Escolha do Tipo de Serviço
@@ -690,11 +815,11 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Fluxo de MANUTENÇÃO - Etapa 2: Seleção de Mecânico (Simplificado)
+        // Fluxo de MANUTENÇÃO - Etapa 2: Seleção de Mecânico
         function selecionarMecanico(nomeMecanico, precoTaxa) {
             // Unifica o nome do tipo de serviço mecânico + o mecânico selecionado
             itemSelecionado.nome = `${servicoMecanicoEscolhido} (${nomeMecanico})`;
-            itemSelecionado.preco = `Taxa de Mão de Obra: R$ ${precoTaxa.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            itemSelecionado.preco = `R$ ${precoTaxa.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             
             // Define o avatar circular com iniciais
             const iniciais = nomeMecanico === 'Iran de Souza' ? 'IS' : 'MA';
@@ -702,20 +827,114 @@
             
             itemSelecionado.fotoHtml = `<div class="w-full h-full ${bgClass} flex items-center justify-center font-bold text-sm shadow-inner">${iniciais}</div>`;
 
-            irParaAcompanhamento('manutencao');
+            irParaPagamento('manutencao');
+        }
+
+        // TELA INTERMEDIÁRIA DE PAGAMENTO
+        function irParaPagamento(tipoOverride) {
+            esconderTodasAsTelas();
+            
+            // Grava o tipo real de serviço para o redirecionamento pós-pagamento
+            dadosDoUsuario.tipoServico = tipoOverride;
+
+            // Injeta o resumo financeiro da compra na tela de pagamento
+            document.getElementById('checkout-item-nome').innerText = itemSelecionado.nome;
+            document.getElementById('checkout-item-preco').innerText = itemSelecionado.preco;
+            document.getElementById('checkout-item-avatar').innerHTML = itemSelecionado.fotoHtml;
+
+            // Define Pix como aba padrão
+            mudarAbaPagamento('pix');
+
+            document.getElementById('tela-pagamento').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Alternador de Abas de Pagamento
+        function mudarAbaPagamento(aba) {
+            // IDs das áreas de conteúdos
+            const contentPix = document.getElementById('conteudo-pagamento-pix');
+            const contentCartao = document.getElementById('conteudo-pagamento-cartao');
+            const contentLevera = document.getElementById('conteudo-pagamento-levera');
+
+            // IDs dos botões
+            const btnPix = document.getElementById('btn-tab-pix');
+            const btnCartao = document.getElementById('btn-tab-cartao');
+            const btnLevera = document.getElementById('btn-tab-levera');
+
+            // Reset geral de classes ativas nos botões
+            [btnPix, btnCartao, btnLevera].forEach(btn => {
+                btn.className = "py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-white/50";
+            });
+
+            // Esconde todas as abas
+            contentPix.classList.add('hidden');
+            contentCartao.classList.add('hidden');
+            contentLevera.classList.add('hidden');
+
+            // Ativa a aba desejada
+            if (aba === 'pix') {
+                contentPix.classList.remove('hidden');
+                btnPix.className = "py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 bg-white text-slate-800 shadow-sm";
+            } else if (aba === 'cartao') {
+                contentCartao.classList.remove('hidden');
+                btnCartao.className = "py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 bg-white text-slate-800 shadow-sm";
+            } else if (aba === 'levera') {
+                contentLevera.classList.remove('hidden');
+                btnLevera.className = "py-2.5 px-3 rounded-lg font-bold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1 bg-white text-slate-800 shadow-sm";
+            }
+        }
+
+        // Função de Copiar Chave Pix usando compatibilidade segura
+        function copiarChavePix() {
+            const inputChave = document.getElementById('pix-key-value');
+            inputChave.select();
+            document.execCommand('copy');
+            
+            // Feedback temporário visual
+            const botaocopia = event.currentTarget;
+            const textoOriginal = botaocopia.innerHTML;
+            botaocopia.innerHTML = `<i class="fa-solid fa-check text-green-400"></i> Copiado!`;
+            setTimeout(() => {
+                botaocopia.innerHTML = textoOriginal;
+            }, 2000);
+        }
+
+        // Processar Pagamento Fictício (Com animação rápida de processamento)
+        function processarEFinalizar() {
+            const btn = document.getElementById('btn-finalizar-pagamento');
+            const conteudoOriginal = btn.innerHTML;
+            
+            // Simular Processamento
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Processando Pagamento...`;
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = conteudoOriginal;
+                irParaAcompanhamento();
+            }, 1200);
+        }
+
+        // Voltar da Tela de Pagamento
+        function voltarDoPagamento() {
+            esconderTodasAsTelas();
+            if (dadosDoUsuario.tipoServico === 'compra') {
+                document.getElementById('tela-lista-compra').classList.remove('hidden');
+            } else {
+                document.getElementById('tela-lista-manutencao').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Função de Entrada da Tela 3: Acompanhamento de Serviços
-        function irParaAcompanhamento(tipoOverride) {
+        function irParaAcompanhamento() {
             esconderTodasAsTelas();
-
-            const tipoFinal = tipoOverride || dadosDoUsuario.tipoServico;
 
             // Injeta dados nos rótulos de acompanhamento
             document.getElementById('lbl-nome-cliente').innerText = dadosDoUsuario.nome;
 
             // Ativa os painéis operacionais corretos de acordo com o fluxo final escolhido
-            if (tipoFinal === 'compra') {
+            if (dadosDoUsuario.tipoServico === 'compra') {
                 document.getElementById('timeline-compra').classList.remove('hidden');
                 document.getElementById('timeline-manutencao').classList.add('hidden');
             } else {
@@ -746,6 +965,7 @@
             document.getElementById('tela-lista-compra').classList.add('hidden');
             document.getElementById('tela-servicos-mecanicos').classList.add('hidden');
             document.getElementById('tela-lista-manutencao').classList.add('hidden');
+            document.getElementById('tela-pagamento').classList.add('hidden');
             document.getElementById('tela-acompanhamento').classList.add('hidden');
         }
 
@@ -760,6 +980,8 @@
                 document.getElementById('tela-servicos-mecanicos').classList.remove('hidden');
             } else if (alvo === 'mecanicos') {
                 document.getElementById('tela-lista-manutencao').classList.remove('hidden');
+            } else if (alvo === 'pagamento') {
+                irParaPagamento(dadosDoUsuario.tipoServico);
             } else if (alvo === 'acompanhamento') {
                 irParaAcompanhamento();
             }
